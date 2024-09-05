@@ -1,0 +1,3 @@
+[flake8]
+exclude = .git,__pycache__,docs/source/conf.py,old,build,dist
+select = F,E112,E113,E203,E304,E502,E702,E703,E71,E72,E731,W191,W6
