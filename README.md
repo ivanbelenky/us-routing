@@ -23,46 +23,47 @@ poetry install
 Here's a quick example of how to use US Routing:
 
 ```python
-from us_routing import route, all_routes
+from us_routing import get_route
 
 # Route between two cities
-r = route('New York', 'Los Angeles')
-print(r.distance, r.duration)
-# Output: 2789.0 42.0
+r = get_route('New York', 'Los Angeles', edge_distance="DURATION")
+print(r.total_distance, r.duration)
+# Output in km of course:
+# 4434.759999999997 1 day, 20:46:24.499959
 
 # Print route steps
 print(r)
 # Output: [
-# Road('I-78 W',),
-# Road('I-80 W',),
+#POINT (-73.99811899964011 40.7508730002449) -> POINT (-74.0013209995546 40.74648499998924) (0.5700000000000001 km) 9TH AV, SP_TH_MA, 72 km/h
+#POINT (-74.0013209995546 40.74648499998924) -> POINT (-74.0054249996425 40.74097199980971) (0.6799999999999999 km) 9TH AV, SP_TH_MA, 72 km/h
+#POINT (-74.0054249996425 40.74097199980971) -> POINT (-74.00819599956175 40.74211600011984) (0.27 km) W 14TH ST, SP_TH_MA, 72 km/h
+#POINT (-74.00819599956175 40.74211600011984) -> POINT (-74.0090509998795 40.74090099973697) (0.16 km) 10TH AV, SP_TH_MA, 72 km/h
 # ...]
 
 # Route between zip codes
-r = route('10001', '60007')
+r = get_route('10001', '60007')
 print(r.total_distance, r.duration)
-# Output: 1160.0 17.0
-
-# Route between coordinates
-r = route((40.7128, -74.0060), (34.0522, -118.2437))
-print(r.total_distance, r.duration)
-# Output: 2789.0 42.0
-
-# Get multiple routes
-
-routes = all_routes('New York', 'Los Angeles', max_routes=3)
-for i, r in enumerate(routes):
-    print(r.total_distance, r.duration)
-
 # Output:
-# 2789.0 42.0
-# 2853.0 43.0
-# 2855.0 43.5
+# 1315.910000000001 13:20:26.827392
+
+
+# Route between coordinates, will raise ValueError if closest node in the graph is too far from the location
+try:
+    r = get_route((40.7128, -74.0060), (34.0522, -118.2437), d_threshold=0.00001)
+    print(r.total_distance, r.duration)
+except ValueError as e:
+    print(e)
+#  Node 2bd87209-d2fe-4f41-a89f-29104aeb5cf9 is too far from location point=<POINT (40.713 -74.006)> zip_code=None admin=None name=None
+
+r = get_route((-74.0060, 40.7128), (-118.2437, 34.0522), d_threshold=10)
+
+
 ```
 
 ## Features
 
 - Fast routing between US locations (cities, zip codes, or coordinates)
-- Multiple routing options (shortest distance, fastest time)
+- Multiple routing options by default (shortest distance, fastest time)
 - Detailed route information (distance, duration, states traversed)
 - Support for finding alternative routes
 
