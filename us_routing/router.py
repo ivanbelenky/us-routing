@@ -195,6 +195,10 @@ class BaseRouter:
         with open(path, "wb") as f:
             pickle.dump(self.graph, f)
 
+    @classmethod
+    def deserialize(cls, path: Path) -> 'BaseRouter':
+        with open(path, "rb") as f: graph = pickle.load(f)
+        return cls(graph=graph)
 
 
 class USRouter(BaseRouter):

@@ -65,7 +65,6 @@ r = get_route((-74.0060, 40.7128), (-118.2437, 34.0522), d_threshold=10)
 - Fast routing between US locations (cities, zip codes, or coordinates)
 - Multiple routing options by default (shortest distance, fastest time)
 - Detailed route information (distance, duration, states traversed)
-- Support for finding alternative routes
 
 ## Data Source
 
@@ -85,6 +84,22 @@ To set up the development environment:
 1. Clone the repository
 2. Install Poetry: `pip install poetry`
 3. Install dependencies: `poetry install`
+
+### Custom Routers
+
+This package provides a `BaseRouter` class that you can use to build your own custom routing graphs. It exposes a very simple API to create routers from shapefiles containing multiple geometries and optional attributes for those geometries. It looks something like this:
+
+```python
+geometries: Sequence[LineString | MultiLineString]
+geometries_data: Optional[Sequence[Dict[str, Any]]] = None # should be serializable
+
+# Optional arguments to define how attributes are compared and set to the edges of the graph
+edge_attr_equal: Optional[Callable[[Any, Any], bool]] = ...
+edge_attr_setter: Optional[Callable[[Any, Any], dict[str, Any]]] = ...
+
+router = BaseRouter.from_geometries(geometries, geometries_data, edge_attr_equal, edge_attr_setter)
+router.serialize("path_to_save")
+```
 
 
 ## Contributing
