@@ -2,7 +2,7 @@
 # US Routing
 
 <p align="center">
-  <img src="https://github.com/ivanbelenky/us-routing/assets/usroutegraph.png" alt="US Routing Logo" width="200" height="200">
+  <img src="https://github.com/ivanbelenky/us-routing/blob/master/assets/usroutegraph.png?raw=true" alt="US Routing Logo" width="600" height="300">
 </p>
 
 US Routing is a Python library for fast local routing in the United States. It's useful when approximations are acceptable. It bootstraps from the [North American Roads dataset](https://geodata.bts.gov/datasets/usdot::north-american-roads).
