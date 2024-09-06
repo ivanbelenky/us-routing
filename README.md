@@ -73,7 +73,9 @@ The routing data is based on the North American Roads dataset. The library inclu
 
 
 ```python
+from us_routing import download_north_american_roads
 
+download_north_american_roads()
 ```
 
 ## Development

@@ -1,8 +1,11 @@
+import logging
 import zipfile
 from pathlib import Path
 
 import requests
 from tqdm import tqdm
+
+logger = logging.getLogger('us_routing')
 
 URL_GETTER_URL = 'https://hub.arcgis.com/api/download/v1/items/0b6c2fd2e3ac40a7929cdff1d4cf604a/{format}?redirect=false&layers=0'
 
@@ -19,21 +22,29 @@ HIGHWAYS_PRINCIPALS_AND_SECONDARY_ROADS_GRAPH_FILE_DOWNLOAD_URL = "https://githu
 NAR_PATH = US_ROUTING_HOME/"north_american_roads"
 
 
+FMT_MAPPER = {
+    'sqlite': 'sqlite',
+    'zip': 'file-geodatabase',
+    'shp': 'shapefile'
+}
+
 def _get_url(url=URL_GETTER_URL):
     response = requests.get(url)
     response.raise_for_status()
     return response.json()['resultUrl']
 
 
-def _download_north_american_roads(url, path=NAR_PATH):
-    extension = url.split('.')[-1]
-    match extension:
+def _download_north_american_roads(url, fmt, path=NAR_PATH):
+    match fmt:
         case 'sqlite': name = 'north_american_roads.sqlite'
-        case 'zip': name = 'north_american_roads.zip'
-        case _: raise ValueError(f"Unknown extension: {extension}")
+        case 'shp': name = 'north_american_roads.shp'
+        case _: raise ValueError(f"Unknown extension: {fmt}")
 
-    if not path.exists(): path.mkdir()
-    if (path/'north_american_roads.sqlite').exists(): return
+    file_path = Path(path, name)
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    if file_path.exists():
+        logger.info(f"File already exists: {file_path}")
+        return
 
     response = requests.get(url, stream=True)
     total_size_in_bytes = int(response.headers.get('content-length', 0))
@@ -46,20 +57,20 @@ def _download_north_american_roads(url, path=NAR_PATH):
     progress_bar.close()
 
     if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
-        print("ERROR, something went wrong")
+        logger.error("ERROR, something went wrong")
 
-    if extension == 'zip':
+    if fmt == 'zip':
         with zipfile.ZipFile(path/name, 'r') as zip_ref:
             zip_ref.extractall(path)
         (path/name).unlink()
 
 
-def download_north_american_roads(fmt: str=None):
-    if fmt not in ['sqlite', 'zip', 'gdb', 'shp']:
-        raise ValueError("data_files must be a list of ['sqlite', 'zip', 'gdb', 'shp']")
+def download_north_american_roads(path: Path=NAR_PATH, fmt: str='shp'):
+    if fmt not in ['sqlite', 'shp']:
+        raise ValueError("data_files must be a list of ['sqlite', 'shp']")
 
-    url = _get_url(URL_GETTER_URL.format(format=fmt))
-    _download_north_american_roads(url)
+    url = _get_url(URL_GETTER_URL.format(format=FMT_MAPPER[fmt]))
+    _download_north_american_roads(url, fmt, path)
 
 
 def download_graph_if_not_exists(
@@ -80,4 +91,4 @@ def download_graph_if_not_exists(
     progress_bar.close()
 
     if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
-        print("ERROR, something went wrong")
+        logger.error("ERROR, something went wrong")
