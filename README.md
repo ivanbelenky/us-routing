@@ -63,7 +63,7 @@ except ValueError as e:
 r = get_route((-74.0060, 40.7128), (-118.2437, 34.0522), d_threshold=10)
 
 # and for sure you can mix stuff up
-r = get_route((40.7128, -74.0060), "seattle", d_threshold=0.00001)
+r = get_route((40.7128, -74.0060), "seattle", d_threshold=15)
 
 ```
 
