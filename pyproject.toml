@@ -7,9 +7,7 @@ authors = ["ivanbelenky <ivandietert@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-#python = "3.11.9"
-# python should be the latest 3.11 and less than 3.12
-python = "^3.11,<3.12"
+python = ">=3.10,<3.12"
 networkx = "^3.3"
 pandas = "^2.2.2"
 numpy = "^2.1.0"
