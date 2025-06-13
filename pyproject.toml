@@ -1,35 +1,42 @@
-[tool.poetry]
+[project]
 name = "us-routing"
 version = "0.1.0"
 description = "US Routing is a Python library for fast local routing in the United States. Useful when approximations are acceptable."
-
-authors = ["ivanbelenky <ivandietert@gmail.com>"]
+authors = [
+    { name = "ivanbelenky", email = "ivandietert@gmail.com" }
+]
+dependencies = [
+    "networkx>=3.5",
+    "pandas>=2.3.0",
+    "numpy>=2.3.0",
+    "pydantic>=2.11.5",
+    "geopandas>=1.1.0",
+    "tqdm>=4.67.1",
+    "requests>=2.32.4",
+    "rtree>=1.4.0",
+    "uszipcode>=1.0.1",
+    "sqlalchemy-mate<2.0.0",
+    "python-levenshtein>=0.27.1",
+]
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = ">=3.11,<3.12"
-networkx = "^3.3"
-pandas = "^2.2.2"
-numpy = "^2.1.0"
-pydantic = "^2.8.2"
-geopandas = "^1.0.1"
-tqdm = "^4.66.5"
-requests = "^2.32.3"
-rtree = "^1.3.0"
-uszipcode = "^1.0.1"
-sqlalchemy-mate = "2.0.0"
-python-levenshtein = "^0.25.1"
-
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.29.5"
-scipy = "^1.14.1"
-matplotlib = "^3.9.2"
-ipython = "^8.27.0"
-openpyxl = "^3.1.5"
-
-
+requires-python = ">= 3.8"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "ipykernel>=6.29.5",
+    "scipy>=1.15.3",
+    "matplotlib>=3.10.3",
+    "ipython>=9.3.0",
+    "openpyxl>=3.1.5",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/us_routing"]
